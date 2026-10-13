@@ -1,0 +1,21 @@
+{
+  "name": "Gerador de Links - InfinityCorp",
+  "short_name": "InfinityCorp",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0B1120",
+  "theme_color": "#005696",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

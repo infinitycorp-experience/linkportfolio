@@ -74,7 +74,7 @@
       </div>
 
       <div class="flex items-center gap-1.5">
-        <!-- Botão de Instalar PWA (fica oculto até o navegador disparar o evento de instalação) -->
+        <!-- Botão de Instalar PWA -->
         <button id="btnInstall" class="hidden px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold shadow-md transition flex items-center gap-1">
           📲 Instalar
         </button>
@@ -156,7 +156,12 @@
 
     <!-- HISTÓRICO RECENTE NO CELULAR DO SDR -->
     <div class="space-y-2">
-      <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-1">Meus Envios Recentes</h2>
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Meus Envios Recentes</h2>
+        <button id="btnLimparTudo" onclick="limparTodoHistorico()" class="text-[10px] text-rose-500 hover:underline font-semibold hidden">
+          Limpar tudo
+        </button>
+      </div>
       <div id="listaHistorico" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
         <!-- Itens inseridos via JavaScript -->
       </div>
@@ -492,7 +497,7 @@
     }
 
     // ==========================================
-    // HISTÓRICO LOCAL
+    // HISTÓRICO LOCAL (SALVAR / EXCLUIR / RENDERIZAR)
     // ==========================================
     function salvarNoHistoricoLocal(item) {
       let lista = [];
@@ -505,8 +510,34 @@
       renderizarHistoricoLocal();
     }
 
+    function excluirItemHistorico(index) {
+      let lista = [];
+      try {
+        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
+      } catch(e){}
+
+      const itemRemovido = lista[index];
+      const nomeCliente = itemRemovido ? itemRemovido.lead : "este item";
+
+      if (confirm(`Remover "${nomeCliente}" do histórico deste aparelho?`)) {
+        lista.splice(index, 1);
+        localStorage.setItem("infinity_historico_sdr", JSON.stringify(lista));
+        renderizarHistoricoLocal();
+        mostrarToast("Item removido do celular!");
+      }
+    }
+
+    function limparTodoHistorico() {
+      if (confirm("Deseja apagar todo o histórico de envios deste aparelho?")) {
+        localStorage.removeItem("infinity_historico_sdr");
+        renderizarHistoricoLocal();
+        mostrarToast("Histórico limpo!");
+      }
+    }
+
     function renderizarHistoricoLocal() {
       const container = document.getElementById("listaHistorico");
+      const btnLimpar = document.getElementById("btnLimparTudo");
       let lista = [];
       try {
         lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
@@ -514,11 +545,14 @@
 
       if (lista.length === 0) {
         container.innerHTML = `<div class="p-3 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 text-center">Nenhum envio recente salvo neste aparelho.</div>`;
+        btnLimpar.classList.add("hidden");
         return;
       }
 
+      btnLimpar.classList.remove("hidden");
       container.innerHTML = "";
-      lista.forEach(item => {
+      
+      lista.forEach((item, index) => {
         const link = `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(item.sigla)}&sdr=${encodeURIComponent(item.sdr)}`;
         const div = document.createElement("div");
         div.className = "p-3 bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-2xl flex items-center justify-between gap-2 shadow-sm transition-colors";
@@ -533,6 +567,9 @@
             </button>
             <button onclick="copiarLinkHistorico('${link}')" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-white transition" title="Copiar Link">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            </button>
+            <button onclick="excluirItemHistorico(${index})" class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white transition" title="Excluir do aparelho">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </button>
           </div>
         `;

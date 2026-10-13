@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>InfinityCorp - Gerador SDR</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Infinity SDR">
+  <meta name="theme-color" content="#080d1a">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#2563eb',
+              darkBg: '#080d1a',
+              darkCard: '#0f172a',
+              darkBorder: '#1e293b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-brand-darkBg text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between p-4 selection:bg-blue-600 selection:text-white">
+
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-slate-800 text-white border border-slate-700 px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-semibold flex items-center gap-2 opacity-0 -translate-y-6 transition-all duration-300 pointer-events-none">
+    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+    <span id="toastMsg">Mensagem</span>
+  </div>
+
+  <!-- CONTAINER CENTRAL -->
+  <div class="max-w-md w-full mx-auto space-y-4 my-auto">
+
+    <!-- CABEÇALHO DO APP -->
+    <header class="flex items-center justify-between pb-3 border-b border-brand-darkBorder">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-700 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 text-white font-black text-lg">
+          ∞
+        </div>
+        <div>
+          <h1 class="text-base font-black tracking-tight text-white flex items-center gap-1.5">
+            InfinityCorp <span class="text-[10px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 font-bold border border-blue-500/20">SDR GO</span>
+          </h1>
+          <p id="labelSdrLogado" class="text-xs text-slate-400">Identificando consultor...</p>
+        </div>
+      </div>
+
+      <button onclick="solicitarTrocaSdr()" class="p-2 rounded-xl bg-brand-darkCard border border-brand-darkBorder text-slate-400 hover:text-white text-xs font-semibold transition">
+        Trocar SDR
+      </button>
+    </header>
+
+    <!-- FORMULÁRIO RÁPIDO DE GERAÇÃO -->
+    <div class="bg-brand-darkCard border border-brand-darkBorder rounded-3xl p-5 shadow-2xl space-y-4">
+      
+      <!-- Linha 1: Nome do Lead -->
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Nome do Cliente / Lead *</label>
+        <input 
+          type="text" 
+          id="leadNome" 
+          oninput="gerarSiglaAutomatica()" 
+          placeholder="Ex: Hospital Albert Einstein" 
+          class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Linha 2: Sigla + WhatsApp lado a lado -->
+      <div class="grid grid-cols-12 gap-3">
+        <div class="col-span-5">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Sigla *</label>
+          <input 
+            type="text" 
+            id="leadSigla" 
+            placeholder="Ex: HAE" 
+            class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-3 py-3 text-sm text-center font-mono font-black text-blue-400 uppercase outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+        </div>
+        <div class="col-span-7">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">WhatsApp (DDD + N°)</label>
+          <input 
+            type="tel" 
+            id="leadWhats" 
+            placeholder="11999998888" 
+            class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-4 py-3 text-sm font-mono text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+        </div>
+      </div>
+
+      <!-- Campos Extras Expansíveis (Opcionais) -->
+      <div>
+        <button type="button" onclick="toggleCamposExtras()" class="text-xs text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 transition">
+          <span id="iconeExtra">▼</span> Mais detalhes (E-mail / Nota)
+        </button>
+        <div id="blocoCamposExtras" class="hidden mt-3 space-y-3 pt-3 border-t border-slate-800">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">E-mail do Lead</label>
+            <input type="email" id="leadEmail" placeholder="contato@empresa.com.br" class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Nota rápida de follow-up</label>
+            <input type="text" id="leadNota" placeholder="Ex: Precisa de 15 térmicas" class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTÃO PRINCIPAL -->
+      <button id="btnGerar" onclick="processarEnvio()" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 active:scale-[0.98] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span>Gerar Link & Enviar</span>
+      </button>
+
+    </div>
+
+    <!-- HISTÓRICO RECENTE NO CELULAR DO SDR -->
+    <div class="space-y-2">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">Meus Envios Recentes</h2>
+      <div id="listaHistorico" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
+        <!-- Itens inseridos via JavaScript -->
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="text-center py-2 text-[11px] text-slate-400">
+    InfinityCorp • Hub Portfólio Comercial
+  </footer>
+
+  <!-- MODAL DE LOGIN / CONFIGURAÇÃO DO SDR -->
+  <div id="modalAuth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md hidden">
+    <div class="bg-brand-darkCard border border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
+        👤
+      </div>
+      <div>
+        <h3 class="text-base font-black text-white">Acesso do Consultor SDR</h3>
+        <p class="text-xs text-slate-400 mt-1">Configure seu nome e o PIN da equipe para liberar a geração de links neste celular.</p>
+      </div>
+
+      <div class="space-y-3 text-left">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Seu Nome / Consultor *</label>
+          <input type="text" id="authNomeSdr" placeholder="Ex: Jonathan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">PIN de Acesso Comercial *</label>
+          <input type="password" id="authPin" maxlength="6" placeholder="••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-center text-lg font-mono tracking-widest text-white outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div id="authErro" class="text-rose-400 text-xs text-center hidden">PIN incorreto. Tente novamente.</div>
+      </div>
+
+      <button onclick="salvarAutenticacaoSDR()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs shadow-lg shadow-blue-500/20 transition">
+        Salvar e Entrar
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE SUCESSO / AÇÕES RÁPIDAS -->
+  <div id="modalSucesso" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="bg-brand-darkCard border border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div>
+        <h3 class="text-base font-black text-white">Link Salvo e Gravado!</h3>
+        <p id="modalSucessoLead" class="text-xs text-slate-400 mt-1">Lead registrado na base de dados.</p>
+      </div>
+
+      <div class="p-3 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between gap-2 text-left">
+        <span id="modalSucessoUrl" class="font-mono text-xs text-blue-400 truncate select-all"></span>
+        <button onclick="copiarLinkModal()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white" title="Copiar Link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+        </button>
+      </div>
+
+      <!-- BOTÕES DE DISPARO RÁPIDO -->
+      <div class="space-y-2 pt-2">
+        <button id="btnModalWhats" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          Disparar no WhatsApp Agora
+        </button>
+        <button id="btnModalEmail" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-2xl font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+          Copiar E-mail Formal
+        </button>
+        <button onclick="fecharModalSucesso()" class="w-full py-2 text-xs text-slate-400 hover:text-white transition">
+          Fechar e Criar Outro
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURAÇÕES DA EMPRESA
+    // ==========================================
+    const URL_BASE_PORTFOLIO = "https://portfolio.infinitycorp.com.br/";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHEClDrFhwM1DBL0DSnjep3W-FZWrJKaLGVykRELisko2ajiY3KOZR_OK5PL6ot9vI/exec";
+    const PIN_EQUIPE = "2026"; // Altere aqui o PIN de 4 dígitos da sua equipe comercial
+
+    let sdrAtivo = "";
+    let linkAtualGerado = "";
+    let leadAtual = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      verificarAutenticacao();
+      renderizarHistoricoLocal();
+    });
+
+    // 1. GESTÃO DE ACESSO DO CONSULTOR (PIN E IDENTIDADE)
+    function verificarAutenticacao() {
+      const sdrSalvo = localStorage.getItem("infinity_sdr_nome");
+      const pinSalvo = localStorage.getItem("infinity_sdr_pin");
+
+      if (sdrSalvo && pinSalvo === PIN_EQUIPE) {
+        sdrAtivo = sdrSalvo;
+        document.getElementById("labelSdrLogado").innerText = `Consultor: ${sdrAtivo}`;
+      } else {
+        document.getElementById("modalAuth").classList.remove("hidden");
+      }
+    }
+
+    function salvarAutenticacaoSDR() {
+      const nome = document.getElementById("authNomeSdr").value.trim();
+      const pin = document.getElementById("authPin").value.trim();
+      const erroEl = document.getElementById("authErro");
+
+      if (!nome) {
+        alert("Digite seu nome.");
+        return;
+      }
+      if (pin !== PIN_EQUIPE) {
+        erroEl.classList.remove("hidden");
+        return;
+      }
+
+      localStorage.setItem("infinity_sdr_nome", nome);
+      localStorage.setItem("infinity_sdr_pin", pin);
+      sdrAtivo = nome;
+      document.getElementById("labelSdrLogado").innerText = `Consultor: ${sdrAtivo}`;
+      document.getElementById("modalAuth").classList.add("hidden");
+      mostrarToast(`Bem-vindo, ${sdrAtivo}!`);
+    }
+
+    function solicitarTrocaSdr() {
+      localStorage.removeItem("infinity_sdr_nome");
+      localStorage.removeItem("infinity_sdr_pin");
+      document.getElementById("authNomeSdr").value = "";
+      document.getElementById("authPin").value = "";
+      document.getElementById("authErro").classList.add("hidden");
+      document.getElementById("modalAuth").classList.remove("hidden");
+    }
+
+    // 2. REGRAS DE SIGLA E SANITIZAÇÃO
+    function gerarSiglaAutomatica() {
+      const nome = document.getElementById("leadNome").value.trim();
+      const inputSigla = document.getElementById("leadSigla");
+      if (!nome) {
+        inputSigla.value = "";
+        return;
+      }
+      const stopWords = ["de", "da", "do", "das", "dos", "e", "em", "para", "com", "a", "o"];
+      const partes = nome.split(/\s+/).filter(p => !stopWords.includes(p.toLowerCase()));
+      let sigla = partes.length === 1 ? partes[0].slice(0, 4).toUpperCase() : partes.map(p => p.charAt(0)).join('').toUpperCase();
+      inputSigla.value = sigla;
+    }
+
+    function sanitizarTelefoneBR(telefone) {
+      if (!telefone) return '';
+      let limpo = telefone.toString().replace(/\D/g, '');
+      if (limpo.startsWith('0')) limpo = limpo.substring(1);
+      if (limpo.length === 10 || limpo.length === 11) limpo = '55' + limpo;
+      return limpo;
+    }
+
+    function toggleCamposExtras() {
+      const bloco = document.getElementById("blocoCamposExtras");
+      const icone = document.getElementById("iconeExtra");
+      bloco.classList.toggle("hidden");
+      icone.innerText = bloco.classList.contains("hidden") ? "▼" : "▲";
+    }
+
+    // 3. ENVIO, REGISTRO NA PLANILHA E GERAÇÃO
+    async function processarEnvio() {
+      const lead = document.getElementById("leadNome").value.trim();
+      const sigla = (document.getElementById("leadSigla").value.trim() || lead).toUpperCase();
+      const whats = document.getElementById("leadWhats").value.trim();
+      const email = document.getElementById("leadEmail").value.trim();
+      const nota = document.getElementById("leadNota").value.trim();
+
+      if (!lead) {
+        alert("Preencha o nome do Lead / Empresa.");
+        document.getElementById("leadNome").focus();
+        return;
+      }
+
+      const btn = document.getElementById("btnGerar");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Registrando...`;
+
+      linkAtualGerado = `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(sigla)}&sdr=${encodeURIComponent(sdrAtivo)}`;
+      leadAtual = lead;
+
+      const payload = {
+        action: "novoEnvio",
+        id: Date.now(),
+        lead: lead,
+        sigla: sigla,
+        sdr: sdrAtivo,
+        dataEnvio: new Date().toISOString(),
+        whats: whats,
+        email: email,
+        nota: nota
+      };
+
+      // Disparo assíncrono para a base sem travar o usuário
+      if (APPS_SCRIPT_URL) {
+        try {
+          fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } catch (e) {
+          console.warn("Falha de rede ao persistir no script:", e);
+        }
+      }
+
+      salvarNoHistoricoLocal(payload);
+
+      btn.disabled = false;
+      btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> <span>Gerar Link & Enviar</span>`;
+
+      // Limpar formulário
+      document.getElementById("leadNome").value = "";
+      document.getElementById("leadSigla").value = "";
+      document.getElementById("leadWhats").value = "";
+      document.getElementById("leadEmail").value = "";
+      document.getElementById("leadNota").value = "";
+
+      abrirModalSucesso(lead, linkAtualGerado, whats);
+    }
+
+    function abrirModalSucesso(lead, link, whats) {
+      document.getElementById("modalSucessoLead").innerText = `Cliente: ${lead}`;
+      document.getElementById("modalSucessoUrl").innerText = link;
+
+      document.getElementById("btnModalWhats").onclick = () => dispararWhatsApp(lead, link, whats);
+      document.getElementById("btnModalEmail").onclick = () => copiarEmailFormal(lead, link, sdrAtivo);
+
+      document.getElementById("modalSucesso").classList.remove("hidden");
+    }
+
+    function fecharModalSucesso() {
+      document.getElementById("modalSucesso").classList.add("hidden");
+    }
+
+    function dispararWhatsApp(lead, link, telefone) {
+      const mensagem = `Olá, tudo bem? \n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso *PORTFÓLIO* interativo da *INFINITYCORP*.\n\nVocê pode explorar todas as nossas soluções, além de montar e nos enviar os itens de interesse diretamente por este link:\n →  ${link}\n\nFico à disposição caso tenha qualquer dúvida!`;
+      const numFormatado = sanitizarTelefoneBR(telefone);
+      const url = numFormatado 
+        ? `https://api.whatsapp.com/send?phone=${numFormatado}&text=${encodeURIComponent(mensagem)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+      
+      window.open(url, '_blank');
+      mostrarToast("WhatsApp aberto!");
+    }
+
+    function copiarLinkModal() {
+      navigator.clipboard.writeText(linkAtualGerado).then(() => {
+        mostrarToast("Link copiado!");
+      }).catch(() => {
+        prompt("Copie o link:", linkAtualGerado);
+      });
+    }
+
+    function copiarEmailFormal(lead, link, sdr) {
+      const plain = `Prezada equipe da ${lead},\n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso PORTFÓLIO interativo da INFINITYCORP.\n\nAcesse pelo link:\n${link}\n\nAtenciosamente,\n${sdr}\nInfinityCorp`;
+      navigator.clipboard.writeText(plain).then(() => {
+        mostrarToast("E-mail copiado!");
+      });
+    }
+
+    // 4. HISTÓRICO LOCAL NO DISPOSITIVO
+    function salvarNoHistoricoLocal(item) {
+      let lista = [];
+      try {
+        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
+      } catch(e){}
+      lista.unshift(item);
+      if (lista.length > 20) lista.pop();
+      localStorage.setItem("infinity_historico_sdr", JSON.stringify(lista));
+      renderizarHistoricoLocal();
+    }
+
+    function renderizarHistoricoLocal() {
+      const container = document.getElementById("listaHistorico");
+      let lista = [];
+      try {
+        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
+      } catch(e){}
+
+      if (lista.length === 0) {
+        container.innerHTML = `<div class="p-3 bg-slate-900/60 border border-slate-800 rounded-2xl text-slate-400 text-center">Nenhum envio recente salvo neste aparelho.</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      lista.forEach(item => {
+        const link = `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(item.sigla)}&sdr=${encodeURIComponent(item.sdr)}`;
+        const div = document.createElement("div");
+        div.className = "p-3 bg-brand-darkCard border border-brand-darkBorder rounded-2xl flex items-center justify-between gap-2";
+        div.innerHTML = `
+          <div class="truncate">
+            <div class="font-bold text-white truncate">${item.lead} <span class="text-blue-400 text-[10px] font-mono">(${item.sigla})</span></div>
+            <div class="text-[10px] text-slate-400 font-mono">${item.whats || 'Sem whats'}</div>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button onclick="dispararWhatsApp('${item.lead.replace(/'/g, "\\'")}', '${link}', '${item.whats}')" class="p-2 rounded-xl bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white transition" title="Reenviar WhatsApp">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            </button>
+            <button onclick="copiarLinkHistorico('${link}')" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition" title="Copiar Link">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function copiarLinkHistorico(link) {
+      navigator.clipboard.writeText(link).then(() => mostrarToast("Link copiado!"));
+    }
+
+    function mostrarToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMsg").innerText = msg;
+      toast.classList.remove("opacity-0", "-translate-y-6", "pointer-events-none");
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "-translate-y-6", "pointer-events-none");
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

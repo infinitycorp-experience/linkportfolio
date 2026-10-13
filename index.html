@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Infinity SDR">
-  <meta name="theme-color" content="#080d1a">
+  <meta name="theme-color" content="#ffffff" id="metaThemeColor">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -36,9 +36,10 @@
   </script>
 
   <style>
-    /* Filtro para adaptar o logo preto em fundo escuro sem distorção */
-    .dark .logo-brand {
-      filter: brightness(0) invert(1);
+    /* Força o logo preto a ficar totalmente branco no modo escuro em qualquer navegador mobile */
+    html.dark .logo-brand {
+      filter: brightness(0) invert(1) !important;
+      -webkit-filter: brightness(0) invert(1) !important;
     }
     .logo-brand {
       transition: filter 0.2s ease-in-out;
@@ -54,55 +55,55 @@
   </div>
 
   <!-- CONTAINER CENTRAL -->
-  <div class="max-w-md w-full mx-auto space-y-4 my-auto">
+  <div class="max-w-md w-full mx-auto space-y-5 my-auto">
 
     <!-- CABEÇALHO DO APP -->
-    <header class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-brand-darkBorder">
+    <header class="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-brand-darkBorder">
       <div class="flex items-center gap-3">
         <!-- Logo InfinityCorp -->
         <img 
           src="https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png" 
           alt="InfinityCorp" 
-          class="h-9 w-auto max-w-[120px] object-contain logo-brand"
+          class="h-10 w-auto max-w-[130px] object-contain logo-brand"
         />
         <div class="border-l border-slate-300 dark:border-slate-700 pl-3">
-          <h1 class="text-xs font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-            Gerador Link Mobile
+          <h1 class="text-sm font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+            Gerador Mobile
           </h1>
-          <p id="labelSdrLogado" class="text-[11px] text-slate-500 dark:text-slate-400">Identificando consultor...</p>
+          <p id="labelSdrLogado" class="text-xs text-slate-500 dark:text-slate-400">Identificando consultor...</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-2">
         <!-- Botão de Instalar PWA -->
-        <button id="btnInstall" class="hidden px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold shadow-md transition flex items-center gap-1">
+        <button id="btnInstall" class="hidden px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition flex items-center gap-1">
           📲 Instalar
         </button>
 
         <!-- Alternador Tema Claro / Escuro -->
-        <button id="btnTheme" onclick="alternarTema()" class="p-2 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder text-slate-600 dark:text-slate-300 hover:text-blue-500 text-xs transition" title="Alternar tema">
+        <button id="btnTheme" onclick="alternarTema()" class="p-2.5 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder text-slate-700 dark:text-slate-300 hover:text-blue-500 text-sm shadow-sm transition" title="Alternar tema">
           <span id="iconeTema">🌙</span>
         </button>
 
         <!-- Trocar SDR -->
-        <button onclick="solicitarTrocaSdr()" class="p-2 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold transition" title="Trocar SDR">
+        <button onclick="solicitarTrocaSdr()" class="p-2.5 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-sm shadow-sm transition" title="Trocar SDR">
           👤
         </button>
       </div>
     </header>
 
     <!-- FORMULÁRIO RÁPIDO DE GERAÇÃO -->
-    <div class="bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-3xl p-5 shadow-xl dark:shadow-2xl space-y-4 transition-colors">
+    <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl p-5 shadow-lg dark:shadow-2xl space-y-4 transition-colors">
       
       <!-- Linha 1: Nome do Lead -->
       <div>
-        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nome do Cliente / Lead *</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Nome do Cliente / Lead *</label>
         <input 
           type="text" 
           id="leadNome" 
           oninput="gerarSiglaAutomatica()" 
           placeholder="Ex: Hospital Albert Einstein" 
-          class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
+          class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
           autocomplete="off"
         />
       </div>
@@ -110,72 +111,72 @@
       <!-- Linha 2: Sigla + WhatsApp lado a lado -->
       <div class="grid grid-cols-12 gap-3">
         <div class="col-span-5">
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Sigla *</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Sigla *</label>
           <input 
             type="text" 
             id="leadSigla" 
             placeholder="Ex: HAE" 
-            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-3 py-3 text-sm text-center font-mono font-black text-blue-600 dark:text-blue-400 uppercase outline-none focus:ring-2 focus:ring-blue-500 transition"
+            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-3 py-3.5 text-base text-center font-mono font-black text-blue-600 dark:text-blue-400 uppercase outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
         <div class="col-span-7">
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">WhatsApp (DDD + N°)</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">WhatsApp (DDD + N°)</label>
           <input 
             type="tel" 
             id="leadWhats" 
             placeholder="11999998888" 
-            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-sm font-mono text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
+            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-base font-mono text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
       </div>
 
       <!-- Campos Extras Expansíveis (Opcionais) -->
       <div>
-        <button type="button" onclick="toggleCamposExtras()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center gap-1 transition">
+        <button type="button" onclick="toggleCamposExtras()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 transition py-1">
           <span id="iconeExtra">▼</span> Mais detalhes (E-mail / Nota)
         </button>
-        <div id="blocoCamposExtras" class="hidden mt-3 space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div id="blocoCamposExtras" class="hidden mt-3 space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">E-mail do Lead</label>
-            <input type="email" id="leadEmail" placeholder="contato@empresa.com.br" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">E-mail do Lead</label>
+            <input type="email" id="leadEmail" placeholder="contato@empresa.com.br" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nota rápida de follow-up</label>
-            <input type="text" id="leadNota" placeholder="Ex: Precisa de 15 térmicas" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Nota rápida de follow-up</label>
+            <input type="text" id="leadNota" placeholder="Ex: Precisa de 15 térmicas" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
       </div>
 
       <!-- BOTÃO PRINCIPAL -->
-      <button id="btnGerar" onclick="processarEnvio()" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 active:scale-[0.98] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <button id="btnGerar" onclick="processarEnvio()" class="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 active:scale-[0.98] text-white rounded-2xl font-black text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span>Gerar Link & Enviar</span>
       </button>
 
     </div>
 
     <!-- HISTÓRICO RECENTE NO CELULAR DO SDR -->
-    <div class="space-y-2">
+    <div class="space-y-2.5">
       <div class="flex items-center justify-between px-1">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Meus Envios Recentes</h2>
-        <button id="btnLimparTudo" onclick="limparTodoHistorico()" class="text-[10px] text-rose-500 hover:underline font-semibold hidden">
+        <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">Meus Envios Recentes</h2>
+        <button id="btnLimparTudo" onclick="limparTodoHistorico()" class="text-xs text-rose-500 hover:underline font-bold hidden">
           Limpar tudo
         </button>
       </div>
-      <div id="listaHistorico" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
+      <div id="listaHistorico" class="space-y-2 max-h-52 overflow-y-auto pr-1 text-xs">
         <!-- Itens inseridos via JavaScript -->
       </div>
     </div>
 
   </div>
 
-  <footer class="text-center py-2 text-[11px] text-slate-400 dark:text-slate-500">
+  <footer class="text-center py-2 text-xs text-slate-400 dark:text-slate-500">
     InfinityCorp • Hub Portfólio Comercial
   </footer>
 
   <!-- MODAL DE LOGIN / CONFIGURAÇÃO DO SDR -->
   <div id="modalAuth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-    <div class="bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
+    <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
       <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
         👤
       </div>
@@ -186,17 +187,17 @@
 
       <div class="space-y-3 text-left">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Seu Nome / Consultor *</label>
-          <input type="text" id="authNomeSdr" placeholder="Ex: Jonathan" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Seu Nome / Consultor *</label>
+          <input type="text" id="authNomeSdr" placeholder="Ex: Jonathan" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">PIN de Acesso Comercial *</label>
-          <input type="password" id="authPin" maxlength="6" placeholder="••••" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-center text-lg font-mono tracking-widest text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">PIN de Acesso Comercial *</label>
+          <input type="password" id="authPin" maxlength="6" placeholder="••••" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-center text-lg font-mono tracking-widest text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div id="authErro" class="text-rose-500 text-xs text-center hidden">PIN incorreto. Tente novamente.</div>
       </div>
 
-      <button onclick="salvarAutenticacaoSDR()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs shadow-lg shadow-blue-500/20 transition">
+      <button onclick="salvarAutenticacaoSDR()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition">
         Salvar e Entrar
       </button>
     </div>
@@ -204,7 +205,7 @@
 
   <!-- MODAL DE SUCESSO / AÇÕES RÁPIDAS -->
   <div id="modalSucesso" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
-    <div class="bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
+    <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
       <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
       </div>
@@ -221,15 +222,15 @@
       </div>
 
       <!-- BOTÕES DE DISPARO RÁPIDO -->
-      <div class="space-y-2 pt-2">
-        <button id="btnModalWhats" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition">
+      <div class="space-y-2.5 pt-2">
+        <button id="btnModalWhats" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
           Disparar no WhatsApp Agora
         </button>
-        <button id="btnModalEmail" class="w-full py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+        <button id="btnModalEmail" class="w-full py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl font-semibold text-xs flex items-center justify-center gap-1.5 transition">
           Copiar E-mail Formal
         </button>
-        <button onclick="fecharModalSucesso()" class="w-full py-2 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
+        <button onclick="fecharModalSucesso()" class="w-full py-2.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
           Fechar e Criar Outro
         </button>
       </div>
@@ -257,21 +258,26 @@
     });
 
     // ==========================================
-    // CONTROLE DE TEMA (CLARO / ESCURO)
+    // CONTROLE DE TEMA (CLARO COMO PADRÃO)
     // ==========================================
     function inicializarTema() {
-      const temaSalvo = localStorage.getItem("infinity_theme") || "dark";
+      // Padrão 'light' (claro) se o usuário ainda não escolheu
+      const temaSalvo = localStorage.getItem("infinity_theme") || "light";
       aplicarTema(temaSalvo);
     }
 
     function aplicarTema(tema) {
       const icone = document.getElementById("iconeTema");
+      const metaColor = document.getElementById("metaThemeColor");
+      
       if (tema === "dark") {
         document.documentElement.classList.add("dark");
         icone.innerText = "☀️";
+        if (metaColor) metaColor.setAttribute("content", "#080d1a");
       } else {
         document.documentElement.classList.remove("dark");
         icone.innerText = "🌙";
+        if (metaColor) metaColor.setAttribute("content", "#ffffff");
       }
       localStorage.setItem("infinity_theme", tema);
     }
@@ -444,7 +450,7 @@
       salvarNoHistoricoLocal(payload);
 
       btn.disabled = false;
-      btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> <span>Gerar Link & Enviar</span>`;
+      btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> <span>Gerar Link & Enviar</span>`;
 
       // Limpar formulário
       document.getElementById("leadNome").value = "";
@@ -523,7 +529,7 @@
         lista.splice(index, 1);
         localStorage.setItem("infinity_historico_sdr", JSON.stringify(lista));
         renderizarHistoricoLocal();
-        mostrarToast("Item removido do celular!");
+        mostrarToast("Item removido!");
       }
     }
 
@@ -544,7 +550,7 @@
       } catch(e){}
 
       if (lista.length === 0) {
-        container.innerHTML = `<div class="p-3 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 text-center">Nenhum envio recente salvo neste aparelho.</div>`;
+        container.innerHTML = `<div class="p-3.5 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 text-center text-xs">Nenhum envio recente salvo neste aparelho.</div>`;
         btnLimpar.classList.add("hidden");
         return;
       }
@@ -558,17 +564,17 @@
         div.className = "p-3 bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-2xl flex items-center justify-between gap-2 shadow-sm transition-colors";
         div.innerHTML = `
           <div class="truncate">
-            <div class="font-bold text-slate-900 dark:text-white truncate">${item.lead} <span class="text-blue-600 dark:text-blue-400 text-[10px] font-mono">(${item.sigla})</span></div>
-            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">${item.whats || 'Sem whats'}</div>
+            <div class="font-bold text-sm text-slate-900 dark:text-white truncate">${item.lead} <span class="text-blue-600 dark:text-blue-400 text-xs font-mono">(${item.sigla})</span></div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${item.whats || 'Sem whats'}</div>
           </div>
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button onclick="dispararWhatsApp('${item.lead.replace(/'/g, "\\'")}', '${link}', '${item.whats}')" class="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition" title="Reenviar WhatsApp">
+            <button onclick="dispararWhatsApp('${item.lead.replace(/'/g, "\\'")}', '${link}', '${item.whats}')" class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition" title="Reenviar WhatsApp">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
             </button>
-            <button onclick="copiarLinkHistorico('${link}')" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-white transition" title="Copiar Link">
+            <button onclick="copiarLinkHistorico('${link}')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-white transition" title="Copiar Link">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
             </button>
-            <button onclick="excluirItemHistorico(${index})" class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white transition" title="Excluir do aparelho">
+            <button onclick="excluirItemHistorico(${index})" class="p-2.5 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white transition" title="Excluir do aparelho">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </button>
           </div>

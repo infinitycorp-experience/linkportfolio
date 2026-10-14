@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>InfinityCorp - Gerador SDR</title>
-  
+
   <!-- PWA & Mobile Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" href="https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png">
@@ -36,14 +36,12 @@
   </script>
 
   <style>
-    /* Força o logo preto a ficar totalmente branco no modo escuro em qualquer navegador mobile */
+    /* Força o logo preto a ficar totalmente branco no modo escuro */
     html.dark .logo-brand {
       filter: brightness(0) invert(1) !important;
       -webkit-filter: brightness(0) invert(1) !important;
     }
-    .logo-brand {
-      transition: filter 0.2s ease-in-out;
-    }
+    .logo-brand { transition: filter 0.2s ease-in-out; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-brand-darkBg text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between p-4 selection:bg-blue-600 selection:text-white transition-colors duration-200">
@@ -60,77 +58,71 @@
     <!-- CABEÇALHO DO APP -->
     <header class="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-brand-darkBorder">
       <div class="flex items-center gap-3">
-        <!-- Logo InfinityCorp -->
-        <img 
-          src="https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png" 
-          alt="InfinityCorp" 
+        <img
+          src="https://infinitycorp.com.br/wp-content/uploads/2024/12/cropped-LOGO-CORP-PRETA-TRANSP-1500X.png"
+          alt="InfinityCorp"
           class="h-10 w-auto max-w-[130px] object-contain logo-brand"
         />
         <div class="border-l border-slate-300 dark:border-slate-700 pl-3">
-          <h1 class="text-sm font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-            Gerador Mobile
-          </h1>
+          <h1 class="text-sm font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">Gerador Mobile</h1>
           <p id="labelSdrLogado" class="text-xs text-slate-500 dark:text-slate-400">Identificando consultor...</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Botão de Instalar PWA -->
         <button id="btnInstall" class="hidden px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition flex items-center gap-1">
           📲 Instalar
         </button>
 
-        <!-- Alternador Tema Claro / Escuro -->
         <button id="btnTheme" onclick="alternarTema()" class="p-2.5 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder text-slate-700 dark:text-slate-300 hover:text-blue-500 text-sm shadow-sm transition" title="Alternar tema">
           <span id="iconeTema">🌙</span>
         </button>
 
-        <!-- Trocar SDR -->
         <button onclick="solicitarTrocaSdr()" class="p-2.5 rounded-xl bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-sm shadow-sm transition" title="Trocar SDR">
           👤
         </button>
       </div>
     </header>
 
-    <!-- FORMULÁRIO RÁPIDO DE GERAÇÃO -->
+    <!-- FORMULÁRIO RÁPIDO -->
     <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl p-5 shadow-lg dark:shadow-2xl space-y-4 transition-colors">
-      
-      <!-- Linha 1: Nome do Lead -->
+
       <div>
         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Nome do Cliente / Lead *</label>
-        <input 
-          type="text" 
-          id="leadNome" 
-          oninput="gerarSiglaAutomatica()" 
-          placeholder="Ex: Hospital Albert Einstein" 
+        <input
+          type="text"
+          id="leadNome"
+          oninput="gerarSiglaAutomatica()"
+          placeholder="Ex: Hospital Albert Einstein"
           class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
           autocomplete="off"
         />
       </div>
 
-      <!-- Linha 2: Sigla + WhatsApp lado a lado -->
       <div class="grid grid-cols-12 gap-3">
         <div class="col-span-5">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Sigla *</label>
-          <input 
-            type="text" 
-            id="leadSigla" 
-            placeholder="Ex: HAE" 
+          <input
+            type="text"
+            id="leadSigla"
+            placeholder="Ex: HAE"
             class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-3 py-3.5 text-base text-center font-mono font-black text-blue-600 dark:text-blue-400 uppercase outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
         <div class="col-span-7">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">WhatsApp (DDD + N°)</label>
-          <input 
-            type="tel" 
-            id="leadWhats" 
-            placeholder="11999998888" 
+          <input
+            type="tel"
+            inputmode="numeric"
+            id="leadWhats"
+            oninput="aplicarMascaraWhats(this)"
+            placeholder="11999998888"
             class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-base font-mono text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
       </div>
 
-      <!-- Campos Extras Expansíveis (Opcionais) -->
+      <!-- Campos extras -->
       <div>
         <button type="button" onclick="toggleCamposExtras()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 transition py-1">
           <span id="iconeExtra">▼</span> Mais detalhes (E-mail / Nota)
@@ -147,25 +139,19 @@
         </div>
       </div>
 
-      <!-- BOTÃO PRINCIPAL -->
       <button id="btnGerar" onclick="processarEnvio()" class="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 active:scale-[0.98] text-white rounded-2xl font-black text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span>Gerar Link & Enviar</span>
       </button>
-
     </div>
 
-    <!-- HISTÓRICO RECENTE NO CELULAR DO SDR -->
+    <!-- HISTÓRICO -->
     <div class="space-y-2.5">
       <div class="flex items-center justify-between px-1">
         <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">Meus Envios Recentes</h2>
-        <button id="btnLimparTudo" onclick="limparTodoHistorico()" class="text-xs text-rose-500 hover:underline font-bold hidden">
-          Limpar tudo
-        </button>
+        <button id="btnLimparTudo" onclick="limparTodoHistorico()" class="text-xs text-rose-500 hover:underline font-bold hidden">Limpar tudo</button>
       </div>
-      <div id="listaHistorico" class="space-y-2 max-h-52 overflow-y-auto pr-1 text-xs">
-        <!-- Itens inseridos via JavaScript -->
-      </div>
+      <div id="listaHistorico" class="space-y-2 max-h-52 overflow-y-auto pr-1 text-xs"></div>
     </div>
 
   </div>
@@ -174,12 +160,10 @@
     InfinityCorp • Hub Portfólio Comercial
   </footer>
 
-  <!-- MODAL DE LOGIN / CONFIGURAÇÃO DO SDR -->
+  <!-- MODAL LOGIN SDR -->
   <div id="modalAuth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
     <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
-      <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">
-        👤
-      </div>
+      <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto text-xl font-bold">👤</div>
       <div>
         <h3 class="text-base font-black text-slate-900 dark:text-white">Acesso do Consultor SDR</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Configure seu nome e o PIN da equipe para liberar a geração de links neste aparelho.</p>
@@ -203,7 +187,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE SUCESSO / AÇÕES RÁPIDAS -->
+  <!-- MODAL SUCESSO -->
   <div id="modalSucesso" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
     <div class="bg-white dark:bg-brand-darkCard border border-slate-300 dark:border-brand-darkBorder rounded-3xl w-full max-w-sm p-6 space-y-4 text-center shadow-2xl transition-colors">
       <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
@@ -221,14 +205,14 @@
         </button>
       </div>
 
-      <!-- BOTÕES DE DISPARO RÁPIDO -->
       <div class="space-y-2.5 pt-2">
         <button id="btnModalWhats" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
           Disparar no WhatsApp Agora
         </button>
-        <button id="btnModalEmail" class="w-full py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl font-semibold text-xs flex items-center justify-center gap-1.5 transition">
-          Copiar E-mail Formal
+        <button id="btnModalEmail" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Copiar Texto do E-mail
         </button>
         <button onclick="fecharModalSucesso()" class="w-full py-2.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
           Fechar e Criar Outro
@@ -244,6 +228,7 @@
     const URL_BASE_PORTFOLIO = "https://portfolio.infinitycorp.com.br/";
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHEClDrFhwM1DBL0DSnjep3W-FZWrJKaLGVykRELisko2ajiY3KOZR_OK5PL6ot9vI/exec";
     const PIN_EQUIPE = "2026";
+    const CHAVE_HISTORICO = "infinity_historico_sdr";
 
     let sdrAtivo = "";
     let linkAtualGerado = "";
@@ -258,18 +243,94 @@
     });
 
     // ==========================================
-    // CONTROLE DE TEMA (CLARO COMO PADRÃO)
+    // UTILITÁRIOS
+    // ==========================================
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function montarLink(sigla, sdr) {
+      return `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(sigla)}&sdr=${encodeURIComponent(sdr)}`;
+    }
+
+    function mostrarToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMsg").innerText = msg;
+      toast.classList.remove("opacity-0", "-translate-y-6", "pointer-events-none");
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "-translate-y-6", "pointer-events-none");
+      }, 2500);
+    }
+
+    // Copia com fallback (PWA/iOS nem sempre liberam o clipboard API)
+    function copiarTexto(texto, msgSucesso) {
+      const ok = () => mostrarToast(msgSucesso);
+      const fallback = () => {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = texto;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const copiou = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (copiou) ok(); else prompt("Copie o texto:", texto);
+        } catch (e) {
+          prompt("Copie o texto:", texto);
+        }
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto).then(ok).catch(fallback);
+      } else {
+        fallback();
+      }
+    }
+
+    // ==========================================
+    // TELEFONE: PADRÃO ÚNICO (DDD + número, só dígitos)
+    // Ex.: 11999998888
+    // ==========================================
+    function limparDigitosWhats(valor) {
+      let d = String(valor || "").replace(/\D/g, "");
+      if (d.startsWith("0")) d = d.replace(/^0+/, "");
+      if (d.length > 11 && d.startsWith("55")) d = d.substring(2);
+      return d.slice(0, 11);
+    }
+
+    // Retorna o número no padrão (10 ou 11 dígitos) ou "" se inválido
+    function normalizarWhats(valor) {
+      const d = limparDigitosWhats(valor);
+      if (d.length === 11 && d.charAt(2) === "9") return d;
+      if (d.length === 10) return d;
+      return "";
+    }
+
+    function aplicarMascaraWhats(input) {
+      input.value = limparDigitosWhats(input.value);
+    }
+
+    // Número completo para a API do WhatsApp (adiciona 55)
+    function sanitizarTelefoneBR(telefone) {
+      const n = normalizarWhats(telefone);
+      return n ? "55" + n : "";
+    }
+
+    // ==========================================
+    // TEMA
     // ==========================================
     function inicializarTema() {
-      // Padrão 'light' (claro) se o usuário ainda não escolheu
-      const temaSalvo = localStorage.getItem("infinity_theme") || "light";
-      aplicarTema(temaSalvo);
+      aplicarTema(localStorage.getItem("infinity_theme") || "light");
     }
 
     function aplicarTema(tema) {
       const icone = document.getElementById("iconeTema");
       const metaColor = document.getElementById("metaThemeColor");
-      
+
       if (tema === "dark") {
         document.documentElement.classList.add("dark");
         icone.innerText = "☀️";
@@ -283,42 +344,39 @@
     }
 
     function alternarTema() {
-      const isDark = document.documentElement.classList.contains("dark");
-      aplicarTema(isDark ? "light" : "dark");
+      aplicarTema(document.documentElement.classList.contains("dark") ? "light" : "dark");
     }
 
     // ==========================================
-    // GESTÃO DE PWA & INSTALAÇÃO NO CELULAR
+    // PWA
     // ==========================================
     function inicializarPWA() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(err => {
-          console.warn('Erro ao registrar Service Worker:', err);
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(err => {
+          console.warn("Erro ao registrar Service Worker:", err);
         });
       }
 
-      const btnInstall = document.getElementById('btnInstall');
+      const btnInstall = document.getElementById("btnInstall");
 
-      window.addEventListener('beforeinstallprompt', (e) => {
+      window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        btnInstall.classList.remove('hidden');
+        btnInstall.classList.remove("hidden");
       });
 
-      btnInstall.addEventListener('click', async () => {
+      btnInstall.addEventListener("click", async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          btnInstall.classList.add('hidden');
-        }
+        if (outcome === "accepted") btnInstall.classList.add("hidden");
         deferredPrompt = null;
       });
 
-      window.addEventListener('appinstalled', () => {
-        btnInstall.classList.add('hidden');
+      window.addEventListener("appinstalled", () => {
+        btnInstall.classList.add("hidden");
         deferredPrompt = null;
-        mostrarToast('App instalado com sucesso!');
+        mostrarToast("App instalado com sucesso!");
       });
     }
 
@@ -369,7 +427,7 @@
     }
 
     // ==========================================
-    // REGRAS DE NEGÓCIO E SANITIZAÇÃO
+    // REGRAS DE NEGÓCIO
     // ==========================================
     function gerarSiglaAutomatica() {
       const nome = document.getElementById("leadNome").value.trim();
@@ -380,16 +438,9 @@
       }
       const stopWords = ["de", "da", "do", "das", "dos", "e", "em", "para", "com", "a", "o"];
       const partes = nome.split(/\s+/).filter(p => !stopWords.includes(p.toLowerCase()));
-      let sigla = partes.length === 1 ? partes[0].slice(0, 4).toUpperCase() : partes.map(p => p.charAt(0)).join('').toUpperCase();
-      inputSigla.value = sigla;
-    }
-
-    function sanitizarTelefoneBR(telefone) {
-      if (!telefone) return '';
-      let limpo = telefone.toString().replace(/\D/g, '');
-      if (limpo.startsWith('0')) limpo = limpo.substring(1);
-      if (limpo.length === 10 || limpo.length === 11) limpo = '55' + limpo;
-      return limpo;
+      inputSigla.value = partes.length === 1
+        ? partes[0].slice(0, 4).toUpperCase()
+        : partes.map(p => p.charAt(0)).join("").toUpperCase();
     }
 
     function toggleCamposExtras() {
@@ -400,12 +451,93 @@
     }
 
     // ==========================================
+    // TEXTOS DE MENSAGEM
+    // ==========================================
+    function montarMensagemWhats(link) {
+      return `Olá, tudo bem? \n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso *PORTFÓLIO* interativo da *INFINITYCORP*.\n\nVocê pode explorar todas as nossas soluções, além de montar e nos enviar os itens de interesse diretamente por este link:\n →  ${link}\n\nFico à disposição caso tenha qualquer dúvida!`;
+    }
+
+function montarEmailHtml(lead, link) {
+  const leadSeguro = escapeHtml(lead);
+  return `
+<div style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1e293b; line-height: 1.6;">
+  <p>Prezada equipe da <strong>${leadSeguro}</strong>,</p>
+  <br>
+  <p>Espero que este e-mail os encontre bem.</p>
+  <p>Para facilitar a visualização, estruturamos uma área exclusiva do nosso PORTFÓLIO interativo da <strong>INFINITYCORP</strong>.</p>
+  <div style="margin: 20px 0;">
+    <a href="${link}" target="_blank" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      👉🏻 Acesso ao Portfólio
+    </a>
+  </div>
+  <p>Agora você tem acesso às soluções completas para sua operação, com a possibilidade de exportar especificações, além de montar e nos enviar os itens de interesse diretamente.</p>
+  <p>Estou à disposição para agendarmos uma breve reunião de alinhamento.</p>
+  <br>
+</div>`;
+}
+
+function montarEmailTexto(lead, link) {
+  return `Prezada equipe da ${lead},\n\nEspero que este e-mail os encontre bem.\n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso PORTFÓLIO interativo da INFINITYCORP.\n\n👉🏻 Acesso ao Portfólio:\n${link}\n\nAgora você tem acesso às soluções completas para sua operação, com a possibilidade de exportar especificações, além de montar e nos enviar os itens de interesse diretamente.\n\nEstou à disposição para agendarmos uma breve reunião de alinhamento.\n`;
+}
+
+async function copiarEmailFormal(lead, link) {
+  const html = montarEmailHtml(lead, link);
+  const plain = montarEmailTexto(lead, link);
+
+  // 1) Clipboard moderno: copia HTML + texto simples
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([plain], { type: "text/plain" })
+        })
+      ]);
+      mostrarToast("E-mail copiado!");
+      return;
+    }
+  } catch (e) {
+    console.warn("ClipboardItem falhou, usando fallback:", e);
+  }
+
+  // 2) Fallback: seleciona o HTML renderizado e copia
+  try {
+    const box = document.createElement("div");
+    box.contentEditable = "true";
+    box.innerHTML = html;
+    box.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+    document.body.appendChild(box);
+
+    const range = document.createRange();
+    range.selectNodeContents(box);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    const ok = document.execCommand("copy");
+    sel.removeAllRanges();
+    document.body.removeChild(box);
+
+    if (ok) {
+      mostrarToast("E-mail copiado!");
+      return;
+    }
+  } catch (e) {
+    console.warn("Fallback HTML falhou:", e);
+  }
+
+  // 3) Último recurso: texto simples
+  copiarTexto(plain, "E-mail copiado (texto simples)!");
+}
+
+
+    // ==========================================
     // PROCESSAMENTO E DISPARO
     // ==========================================
     async function processarEnvio() {
       const lead = document.getElementById("leadNome").value.trim();
       const sigla = (document.getElementById("leadSigla").value.trim() || lead).toUpperCase();
-      const whats = document.getElementById("leadWhats").value.trim();
+      const whatsBruto = document.getElementById("leadWhats").value.trim();
       const email = document.getElementById("leadEmail").value.trim();
       const nota = document.getElementById("leadNota").value.trim();
 
@@ -415,11 +547,22 @@
         return;
       }
 
+      // Telefone: se preenchido, precisa estar válido (DDD + número)
+      let whats = "";
+      if (whatsBruto) {
+        whats = normalizarWhats(whatsBruto);
+        if (!whats) {
+          alert("WhatsApp inválido. Use DDD + número, ex: 11999998888");
+          document.getElementById("leadWhats").focus();
+          return;
+        }
+      }
+
       const btn = document.getElementById("btnGerar");
       btn.disabled = true;
       btn.innerHTML = `<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Registrando...`;
 
-      linkAtualGerado = `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(sigla)}&sdr=${encodeURIComponent(sdrAtivo)}`;
+      linkAtualGerado = montarLink(sigla, sdrAtivo);
       leadAtual = lead;
 
       const payload = {
@@ -429,7 +572,7 @@
         sigla: sigla,
         sdr: sdrAtivo,
         dataEnvio: new Date().toISOString(),
-        whats: whats,
+        whats: whats, // sempre no padrão DDD+número (ex: 11999998888)
         email: email,
         nota: nota
       };
@@ -452,12 +595,9 @@
       btn.disabled = false;
       btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> <span>Gerar Link & Enviar</span>`;
 
-      // Limpar formulário
-      document.getElementById("leadNome").value = "";
-      document.getElementById("leadSigla").value = "";
-      document.getElementById("leadWhats").value = "";
-      document.getElementById("leadEmail").value = "";
-      document.getElementById("leadNota").value = "";
+      ["leadNome", "leadSigla", "leadWhats", "leadEmail", "leadNota"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
 
       abrirModalSucesso(lead, linkAtualGerado, whats);
     }
@@ -467,7 +607,7 @@
       document.getElementById("modalSucessoUrl").innerText = link;
 
       document.getElementById("btnModalWhats").onclick = () => dispararWhatsApp(lead, link, whats);
-      document.getElementById("btnModalEmail").onclick = () => copiarEmailFormal(lead, link, sdrAtivo);
+      document.getElementById("btnModalEmail").onclick = () => copiarEmailFormal(lead, link);
 
       document.getElementById("modalSucesso").classList.remove("hidden");
     }
@@ -477,57 +617,51 @@
     }
 
     function dispararWhatsApp(lead, link, telefone) {
-      const mensagem = `Olá, tudo bem? \n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso *PORTFÓLIO* interativo da *INFINITYCORP*.\n\nVocê pode explorar todas as nossas soluções, além de montar e nos enviar os itens de interesse diretamente por este link:\n →  ${link}\n\nFico à disposição caso tenha qualquer dúvida!`;
+      const mensagem = montarMensagemWhats(link);
       const numFormatado = sanitizarTelefoneBR(telefone);
-      const url = numFormatado 
+      const url = numFormatado
         ? `https://api.whatsapp.com/send?phone=${numFormatado}&text=${encodeURIComponent(mensagem)}`
         : `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-      
-      window.open(url, '_blank');
+
+      window.open(url, "_blank");
       mostrarToast("WhatsApp aberto!");
     }
 
     function copiarLinkModal() {
-      navigator.clipboard.writeText(linkAtualGerado).then(() => {
-        mostrarToast("Link copiado!");
-      }).catch(() => {
-        prompt("Copie o link:", linkAtualGerado);
-      });
+      copiarTexto(linkAtualGerado, "Link copiado!");
     }
 
-    function copiarEmailFormal(lead, link, sdr) {
-      const plain = `Prezada equipe da ${lead},\n\nPara facilitar a visualização, estruturamos uma área exclusiva do nosso PORTFÓLIO interativo da INFINITYCORP.\n\nAcesse pelo link:\n${link}\n\nAtenciosamente,\n${sdr}\nInfinityCorp`;
-      navigator.clipboard.writeText(plain).then(() => {
-        mostrarToast("E-mail copiado!");
-      });
-    }
-
+       // ==========================================
+    // HISTÓRICO LOCAL
     // ==========================================
-    // HISTÓRICO LOCAL (SALVAR / EXCLUIR / RENDERIZAR)
-    // ==========================================
-    function salvarNoHistoricoLocal(item) {
-      let lista = [];
+    function lerHistorico() {
       try {
-        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
-      } catch(e){}
+        return JSON.parse(localStorage.getItem(CHAVE_HISTORICO) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function gravarHistorico(lista) {
+      localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(lista));
+    }
+
+    function salvarNoHistoricoLocal(item) {
+      const lista = lerHistorico();
       lista.unshift(item);
       if (lista.length > 20) lista.pop();
-      localStorage.setItem("infinity_historico_sdr", JSON.stringify(lista));
+      gravarHistorico(lista);
       renderizarHistoricoLocal();
     }
 
     function excluirItemHistorico(index) {
-      let lista = [];
-      try {
-        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
-      } catch(e){}
+      const lista = lerHistorico();
+      const item = lista[index];
+      if (!item) return;
 
-      const itemRemovido = lista[index];
-      const nomeCliente = itemRemovido ? itemRemovido.lead : "este item";
-
-      if (confirm(`Remover "${nomeCliente}" do histórico deste aparelho?`)) {
+      if (confirm(`Remover "${item.lead}" do histórico deste aparelho?`)) {
         lista.splice(index, 1);
-        localStorage.setItem("infinity_historico_sdr", JSON.stringify(lista));
+        gravarHistorico(lista);
         renderizarHistoricoLocal();
         mostrarToast("Item removido!");
       }
@@ -535,19 +669,35 @@
 
     function limparTodoHistorico() {
       if (confirm("Deseja apagar todo o histórico de envios deste aparelho?")) {
-        localStorage.removeItem("infinity_historico_sdr");
+        localStorage.removeItem(CHAVE_HISTORICO);
         renderizarHistoricoLocal();
         mostrarToast("Histórico limpo!");
       }
     }
 
+    // Ações dos botões da lista (por índice, evita problemas com aspas)
+    function acaoHistoricoWhats(index) {
+      const item = lerHistorico()[index];
+      if (!item) return;
+      dispararWhatsApp(item.lead, montarLink(item.sigla, item.sdr), item.whats);
+    }
+
+    function acaoHistoricoLink(index) {
+      const item = lerHistorico()[index];
+      if (!item) return;
+      copiarTexto(montarLink(item.sigla, item.sdr), "Link copiado!");
+    }
+
+    function acaoHistoricoEmail(index) {
+      const item = lerHistorico()[index];
+      if (!item) return;
+      copiarEmailFormal(item.lead, montarLink(item.sigla, item.sdr));
+    }
+
     function renderizarHistoricoLocal() {
       const container = document.getElementById("listaHistorico");
       const btnLimpar = document.getElementById("btnLimparTudo");
-      let lista = [];
-      try {
-        lista = JSON.parse(localStorage.getItem("infinity_historico_sdr") || "[]");
-      } catch(e){}
+      const lista = lerHistorico();
 
       if (lista.length === 0) {
         container.innerHTML = `<div class="p-3.5 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 text-center text-xs">Nenhum envio recente salvo neste aparelho.</div>`;
@@ -557,21 +707,24 @@
 
       btnLimpar.classList.remove("hidden");
       container.innerHTML = "";
-      
+
       lista.forEach((item, index) => {
-        const link = `${URL_BASE_PORTFOLIO}?lead=${encodeURIComponent(item.sigla)}&sdr=${encodeURIComponent(item.sdr)}`;
+        const whatsPadrao = normalizarWhats(item.whats); // exibe no mesmo formato do placeholder
         const div = document.createElement("div");
         div.className = "p-3 bg-white dark:bg-brand-darkCard border border-slate-200 dark:border-brand-darkBorder rounded-2xl flex items-center justify-between gap-2 shadow-sm transition-colors";
         div.innerHTML = `
-          <div class="truncate">
-            <div class="font-bold text-sm text-slate-900 dark:text-white truncate">${item.lead} <span class="text-blue-600 dark:text-blue-400 text-xs font-mono">(${item.sigla})</span></div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${item.whats || 'Sem whats'}</div>
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-sm text-slate-900 dark:text-white truncate">${escapeHtml(item.lead)} <span class="text-blue-600 dark:text-blue-400 text-xs font-mono">(${escapeHtml(item.sigla)})</span></div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${whatsPadrao || "Sem whats"}</div>
           </div>
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button onclick="dispararWhatsApp('${item.lead.replace(/'/g, "\\'")}', '${link}', '${item.whats}')" class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition" title="Reenviar WhatsApp">
+            <button onclick="acaoHistoricoWhats(${index})" class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition" title="Reenviar WhatsApp">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
             </button>
-            <button onclick="copiarLinkHistorico('${link}')" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-white transition" title="Copiar Link">
+            <button onclick="acaoHistoricoEmail(${index})" class="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition" title="Copiar texto do e-mail">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </button>
+            <button onclick="acaoHistoricoLink(${index})" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-white transition" title="Copiar Link">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
             </button>
             <button onclick="excluirItemHistorico(${index})" class="p-2.5 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white transition" title="Excluir do aparelho">
@@ -581,19 +734,6 @@
         `;
         container.appendChild(div);
       });
-    }
-
-    function copiarLinkHistorico(link) {
-      navigator.clipboard.writeText(link).then(() => mostrarToast("Link copiado!"));
-    }
-
-    function mostrarToast(msg) {
-      const toast = document.getElementById("toast");
-      document.getElementById("toastMsg").innerText = msg;
-      toast.classList.remove("opacity-0", "-translate-y-6", "pointer-events-none");
-      setTimeout(() => {
-        toast.classList.add("opacity-0", "-translate-y-6", "pointer-events-none");
-      }, 2500);
     }
   </script>
 </body>

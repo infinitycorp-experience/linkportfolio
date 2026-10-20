@@ -1,3 +1,5 @@
+const CACHE = 'reembolso-v2';
+
 self.addEventListener('install', (e) => {
   self.skipWaiting();
 });

@@ -1,6 +1,6 @@
 {
-  "name": "Gerador de Links - InfinityCorp",
-  "short_name": "Links InfinityCorp",
+  "name": "Gera Links",
+  "short_name": "Gera Links",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0B1120",
